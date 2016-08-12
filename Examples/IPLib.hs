@@ -26,20 +26,20 @@ mkImage height width ixf =
     Vec width (\ j -> ixf i j))
 
 heightImage :: Image -> Exp Word32
-heightImage image = lenVec image
+heightImage image = len image
 
 widthImage :: Image -> Exp Word32
-widthImage image = lenVec (indVec image 0)
+widthImage image = len (ind image 0)
 
 getPixel :: Image -> Exp Word32 -> Exp Word32 -> Pixel
-getPixel  vec i j = indVec (indVec vec i) j
+getPixel  vec i j = ind (ind vec i) j
 
 vecToImage :: Exp Word32 -> Exp Word32 -> Vec (Exp Word32) -> Image
 vecToImage height width as =
                  mkImage height width (\ i j ->
-                     mkPixel (indVec as ((j+i*width)*3))
-                             (indVec as ((j+i*width)*3+1))
-                             (indVec as ((j+i*width)*3+2)))
+                     mkPixel (ind as ((j+i*width)*3))
+                             (ind as ((j+i*width)*3+1))
+                             (ind as ((j+i*width)*3+2)))
 
 imageToVec :: Image -> Vec (Exp Word32)
 imageToVec image = let height = heightImage image
@@ -59,6 +59,6 @@ compileImageProcessor name f =
   makeIP
     (compile
        (\ imageVec ->
-           let l = sqrtE (divE (lenVec imageVec) 3)
+           let l = sqrtE (divE (len imageVec) 3)
            in  imageToVec (f (vecToImage l l imageVec))))
        name
